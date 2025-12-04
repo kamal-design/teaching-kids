@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Text, Button } from "@teaching-kids/ui";
 
 export default function Home() {
