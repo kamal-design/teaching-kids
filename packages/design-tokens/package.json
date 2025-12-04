@@ -1,0 +1,13 @@
+{
+  "name": "@teaching-kids/design-tokens",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "style-dictionary build"
+  },
+  "devDependencies": {
+    "style-dictionary": "^3.0.0",
+    "typescript": "latest"
+  }
+}

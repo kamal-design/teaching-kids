@@ -1,0 +1,22 @@
+{
+  "color": {
+    "primary": {
+      "main": { "value": "#8B5CF6" },
+      "light": { "value": "#A78BFA" },
+      "dark": { "value": "#7C3AED" }
+    },
+    "secondary": {
+      "main": { "value": "#EC4899" },
+      "light": { "value": "#F472B6" },
+      "dark": { "value": "#DB2777" }
+    },
+    "background": {
+      "default": { "value": "#0F172A" },
+      "paper": { "value": "#1E293B" }
+    },
+    "text": {
+      "primary": { "value": "#F8FAFC" },
+      "secondary": { "value": "#94A3B8" }
+    }
+  }
+}
