@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 // Using react-native imports as NativeWind handles web compatibility
 import { View, ScrollView, Platform, Alert } from "react-native";
 import { Button, Input, Text, Box } from "@teaching-kids/ui";
+import * as Speech from "expo-speech";
 
 // Determine API URL based on platform
 const API_URL =
@@ -54,6 +55,14 @@ export default function App() {
     }
   };
 
+  const handleSpeak = (text: string) => {
+    Speech.speak(text, {
+      language: "en",
+      pitch: 1.0,
+      rate: 0.9,
+    });
+  };
+
   if (!user) {
     return (
       <View className="flex-1 justify-center p-4 bg-gray-50">
@@ -92,11 +101,21 @@ export default function App() {
             key={activity.id}
             className="p-4 border border-gray-200 rounded-lg mb-4 bg-gray-50"
           >
-            <Text className="font-bold text-lg">{activity.title}</Text>
-            <Text className="text-sm text-gray-500 mb-2">
-              {activity.classType} •{" "}
-              {new Date(activity.date).toLocaleDateString()}
-            </Text>
+            <View className="flex-row justify-between items-start mb-2">
+              <View className="flex-1 mr-2">
+                <Text className="font-bold text-lg">{activity.title}</Text>
+                <Text className="text-sm text-gray-500">
+                  {activity.classType} •{" "}
+                  {new Date(activity.date).toLocaleDateString()}
+                </Text>
+              </View>
+              <Button
+                label="🔊"
+                variant="secondary"
+                className="p-2 h-10 w-10 !rounded-full"
+                onPress={() => handleSpeak(activity.description)}
+              />
+            </View>
             <Text>{activity.description}</Text>
           </View>
         ))

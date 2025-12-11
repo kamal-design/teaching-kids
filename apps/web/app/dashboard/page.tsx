@@ -42,6 +42,15 @@ export default function DashboardPage() {
     router.push("/login");
   };
 
+  const handleSpeak = (text: string) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Text-to-speech not supported in this browser.");
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -54,7 +63,9 @@ export default function DashboardPage() {
           <Button label="Logout" onPress={handleLogout} variant="outline" />
         </Box>
 
-        <Text className="text-xl mb-6 text-black">Here are the latest class activities:</Text>
+        <Text className="text-xl mb-6 text-black">
+          Here are the latest class activities:
+        </Text>
 
         <Box className="space-y-4">
           {activities.length === 0 ? (
@@ -66,12 +77,22 @@ export default function DashboardPage() {
                 className="p-6 bg-white rounded-lg shadow-sm border border-gray-200"
               >
                 <div className="flex justify-between items-start mb-2">
-                  <Text className="text-xl font-bold text-black">{activity.title}</Text>
-                  <Text className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    {activity.classType}
-                  </Text>
+                  <div className="flex-1">
+                    <Text className="text-xl font-bold text-black">
+                      {activity.title}
+                    </Text>
+                    <Text className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded inline-block mt-1">
+                      {activity.classType}
+                    </Text>
+                  </div>
+                  <Button
+                    label="🔊"
+                    variant="secondary"
+                    className="px-3 py-1 ml-4"
+                    onPress={() => handleSpeak(activity.description)}
+                  />
                 </div>
-                <Text className="text-sm text-gray-500 mb-4">
+                <Text className="text-sm text-gray-500 mb-4 block">
                   {new Date(activity.date).toLocaleDateString()}
                 </Text>
                 <Text className="text-gray-700">{activity.description}</Text>
