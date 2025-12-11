@@ -41,6 +41,14 @@ export class UsersService {
     });
   }
 
+  async findByEmailOrMobile(identifier: string): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        OR: [{ email: identifier }, { mobile: identifier }],
+      },
+    });
+  }
+
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;

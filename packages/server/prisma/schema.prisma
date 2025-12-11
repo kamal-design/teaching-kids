@@ -12,8 +12,20 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
+  mobile    String?  @unique
   name      String?
   role      String   @default("PARENT") // PARENT, STUDENT, TEACHER
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String?
+  date        DateTime
+  classType   String // e.g., "Art", "Math", "Sports"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

@@ -14,6 +14,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post('login')
+  async login(@Body() body: { emailOrMobile: string }) {
+    const user = await this.usersService.findByEmailOrMobile(
+      body.emailOrMobile,
+    );
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+    return { success: true, user };
+  }
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);

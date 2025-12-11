@@ -1,33 +1,113 @@
 import "./global.css";
-import "./global.css";
-// @ts-ignore
-import { View, Text, StyleSheet, Platform } from "react-native-web";
-// import { View, Text, StyleSheet, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+// Using react-native imports as NativeWind handles web compatibility
+import { View, ScrollView, Platform, Alert } from "react-native";
+import { Button, Input, Text, Box } from "@teaching-kids/ui";
 
-console.log("Running on Platform:", Platform.OS);
-const debugStyles = StyleSheet.create({ test: { color: "red" } });
-console.log("Debug Styles:", debugStyles);
+// Determine API URL based on platform
+const API_URL =
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Basic Render Test</Text>
-      <Text>Platform: {Platform.OS}</Text>
-    </View>
-  );
+interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  classType: string;
+  date: string;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "lightblue",
-    minHeight: "100vh", // Ensure full height on web
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "black",
-  },
-});
+export default function App() {
+  const [emailOrMobile, setEmailOrMobile] = useState("");
+  const [user, setUser] = useState<any>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailOrMobile }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.user);
+        fetchActivities();
+      } else {
+        alert("Login failed: " + data.message);
+      }
+    } catch (error) {
+      alert("Login error: " + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchActivities = async () => {
+    try {
+      const response = await fetch(`${API_URL}/activities`);
+      const data = await response.json();
+      setActivities(data);
+    } catch (error) {
+      console.error("Failed to fetch activities", error);
+    }
+  };
+
+  if (!user) {
+    return (
+      <View className="flex-1 justify-center p-4 bg-gray-50">
+        <Text className="text-2xl font-bold text-center mb-8">
+          Teaching Kids
+        </Text>
+        <Input
+          placeholder="Email or Mobile"
+          value={emailOrMobile}
+          onChangeText={setEmailOrMobile}
+          className="mb-4"
+        />
+        <Button
+          label={loading ? "Logging in..." : "Login"}
+          onPress={handleLogin}
+          disabled={loading}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView className="flex-1 bg-white p-4 pt-12">
+      <Text className="text-2xl font-bold mb-4">
+        Welcome, {user.name || "Parent"}!
+      </Text>
+      <Text className="text-lg mb-6">
+        Here are the latest class activities:
+      </Text>
+
+      {activities.length === 0 ? (
+        <Text className="text-gray-500">No activities found.</Text>
+      ) : (
+        activities.map((activity) => (
+          <View
+            key={activity.id}
+            className="p-4 border border-gray-200 rounded-lg mb-4 bg-gray-50"
+          >
+            <Text className="font-bold text-lg">{activity.title}</Text>
+            <Text className="text-sm text-gray-500 mb-2">
+              {activity.classType} •{" "}
+              {new Date(activity.date).toLocaleDateString()}
+            </Text>
+            <Text>{activity.description}</Text>
+          </View>
+        ))
+      )}
+
+      <Button
+        label="Logout"
+        variant="outline"
+        onPress={() => setUser(null)}
+        className="mt-8"
+      />
+    </ScrollView>
+  );
+}
